@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chat with Healthy Assistance (AS)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+    }
+    .chatbox {
+      height: 400px;
+      overflow: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+    .message {
+      margin-bottom: 10px;
+    }
+    .user {
+      color: blue;
+    }
+    .bot {
+      color: green;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+      border: 1px solid #ccc;
+    }
+    .copy-button {
+      margin-top: 5px;
+      background-color: #008CBA;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Chat with Healthy Assistance (AS)</h1>
+  <div class="chatbox" id="chatbox"></div>
+  <input type="text" id="message" placeholder="Type your message here...">
+  <button id="send">Send</button>
+  <script>
+    var chatbox = document.getElementById("chatbox");
+    var message = document.getElementById("message");
+    var send = document.getElementById("send");
+
+    // Function to send the message
+    function sendMessage() {
+      var userMessage = message.value;
+      var userDiv = document.createElement("div");
+      userDiv.className = "message user";
+      userDiv.innerHTML = "<strong>You:</strong> " + userMessage;
+      chatbox.appendChild(userDiv);
+
+      message.value = "";
+
+      fetch("/get_response?message=" + encodeURIComponent(userMessage))
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          var botMessage = data.botMessage;
+          var botDiv = document.createElement("div");
+          botDiv.className = "message bot";
+          botDiv.innerHTML = "<strong>Healthy Assistance:</strong> " + botMessage;
+          chatbox.appendChild(botDiv);
+
+          // Create a copy button for the generated text
+          var copyButton = document.createElement("button");
+          copyButton.className = "copy-button";
+          copyButton.innerText = "Pay and ride"; // Change the button text to "Link"
+          copyButton.addEventListener("click", function () {
+            // Copy the generated text to the clipboard
+            var textToCopy = botMessage;
+            var textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("copy");
+            document.body.removeChild(textArea);
+            alert("Copied to clipboard: " + textToCopy);
+
+            // Open a new window with the payment link
+            window.open("http://localhost:3000/", "_blank");
+          });
+          botDiv.appendChild(copyButton); // Add the "Link" button to the bot's response
+
+          chatbox.scrollTop = chatbox.scrollHeight;
+        });
+    }
+
+    // Add an event listener for Enter keypress
+    message.addEventListener("keydown", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault(); // Prevent Enter from adding a new line
+        sendMessage(); // Call the sendMessage function
+      }
+    });
+
+    // Add a click event listener for the Send button
+    send.addEventListener("click", sendMessage);
+  </script>
+</body>
+</html>
