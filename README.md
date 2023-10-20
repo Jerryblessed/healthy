@@ -1,4 +1,4 @@
-# healthy
+# Healthy
 A website seamlessly powered by Google AI and Square's payment system designed with the purpose of providing health assistance to individuals through a hybrid approach, combining the expertise of medical professionals with AI tools.
 
 # Installation
@@ -10,4 +10,4 @@ Create a folder called "templates" and include the "chat.html" file.
 Run the app.py using python.
 
 # Payment System
-The payment system repo link is "https://github.com/square/web-payments-quickstarts"
+The payment system repo link https://github.com/square/web-payments-quickstart
